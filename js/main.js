@@ -2,6 +2,47 @@
    Lucky Im — Portfolio · main.js
    ============================================ */
 
+// Hamburger menu
+const hamburger = document.getElementById('nav-hamburger');
+if (hamburger) {
+  // Build mobile menu and inject after nav
+  const mobileMenu = document.createElement('div');
+  mobileMenu.className = 'nav-mobile-menu';
+  mobileMenu.id = 'nav-mobile-menu';
+  ['About|/about', 'Projects|/projects', 'Diary|/diary'].forEach(item => {
+    const [label, href] = item.split('|');
+    const a = document.createElement('a');
+    a.href = href;
+    a.textContent = label;
+    mobileMenu.appendChild(a);
+  });
+  document.getElementById('nav').after(mobileMenu);
+
+  hamburger.addEventListener('click', () => {
+    const open = hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open', open);
+    hamburger.setAttribute('aria-expanded', open);
+  });
+
+  // Close on link tap
+  mobileMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', false);
+    });
+  });
+
+  // Close on outside tap
+  document.addEventListener('click', e => {
+    if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', false);
+    }
+  });
+}
+
 // Nav scroll border
 const nav = document.getElementById('nav');
 if (nav) {
