@@ -51,5 +51,79 @@
   </footer>
 
   <script src="../js/main.js"></script>
+
+  <!-- p5.js sea waves -->
+  <canvas id="wave-canvas"></canvas>
+  <style>
+    #wave-canvas {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      width: 55vw;
+      height: 38vh;
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+  <script>
+    (function () {
+      const canvas = document.getElementById('wave-canvas');
+
+      new p5(function (p) {
+        let t = 0;
+
+        const waves = [
+          { amp: 18, period: 0.018, speed: 0.022, yOff: 0.62, alpha: 80,  color: [135, 206, 235] },
+          { amp: 14, period: 0.022, speed: 0.018, yOff: 0.70, alpha: 100, color: [100, 185, 225] },
+          { amp: 20, period: 0.015, speed: 0.028, yOff: 0.78, alpha: 130, color: [70,  160, 215] },
+          { amp: 12, period: 0.025, speed: 0.015, yOff: 0.86, alpha: 160, color: [50,  140, 200] },
+          { amp: 10, period: 0.030, speed: 0.012, yOff: 0.93, alpha: 200, color: [30,  120, 185] },
+        ];
+
+        p.setup = function () {
+          const c = p.createCanvas(canvas.offsetWidth, canvas.offsetHeight);
+          c.parent(canvas.parentElement);
+          canvas.remove();
+          c.elt.style.cssText = `
+            position: fixed; bottom: 0; right: 0;
+            width: 55vw; height: 38vh;
+            pointer-events: none; z-index: 0;
+          `;
+          p.noStroke();
+        };
+
+        p.draw = function () {
+          p.clear();
+          t += 1;
+
+          for (const w of waves) {
+            const baseY = p.height * w.yOff;
+            p.fill(w.color[0], w.color[1], w.color[2], w.alpha);
+            p.beginShape();
+            p.vertex(0, p.height);
+
+            // fade-in mask: wave starts from right edge, tapers off toward left
+            for (let x = 0; x <= p.width; x += 4) {
+              const fade   = p.map(x, 0, p.width * 0.45, 0, 1, true);
+              const amp    = w.amp * fade;
+              const y      = baseY + p.sin(x * w.period + t * w.speed) * amp;
+              p.vertex(x, y);
+            }
+
+            p.vertex(p.width, p.height);
+            p.endShape(p.CLOSE);
+          }
+        };
+
+        p.windowResized = function () {
+          p.resizeCanvas(
+            p.canvas.parentElement.offsetWidth * 0.55,
+            p.canvas.parentElement.offsetHeight * 0.38
+          );
+        };
+      });
+    })();
+  </script>
 </body>
 </html>
