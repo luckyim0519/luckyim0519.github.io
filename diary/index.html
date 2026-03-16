@@ -26,6 +26,11 @@
   <section id="diary-page">
     <div class="section-label reveal">일기장</div>
 
+    <!-- sea animation as inline diary content -->
+    <div class="diary-entry reveal" id="sea-entry">
+      <div id="beach-sketch"></div>
+    </div>
+
     <div class="diary-entry reveal">
       <div class="diary-date">March 9, 2025</div>
       <h3 class="diary-title">오늘 해카톤에서 보틀넥 2개를 찾았다</h3>
@@ -54,14 +59,15 @@
 
   <!-- p5.js sea beach -->
   <style>
+    #sea-entry {
+      padding: 0;
+      overflow: hidden;
+      border-radius: 8px;
+    }
     #beach-sketch {
-      position: fixed;
-      bottom: 0;
-      right: 0;
-      width: 55vw;
-      height: 42vh;
-      pointer-events: none;
-      z-index: 0;
+      width: 100%;
+      height: 320px;
+      display: block;
     }
     #beach-sketch canvas {
       display: block;
@@ -69,7 +75,6 @@
       height: 100% !important;
     }
   </style>
-  <div id="beach-sketch"></div>
   <script src="../js/p5.min.js"></script>
   <script>
     new p5(function (p) {
@@ -85,9 +90,8 @@
       ];
 
       p.setup = function () {
-        const container = document.getElementById('beach-sketch');
-        const c = p.createCanvas(container.offsetWidth, container.offsetHeight);
-        c.parent('beach-sketch');
+        const el = document.getElementById('beach-sketch');
+        p.createCanvas(el.offsetWidth, el.offsetHeight).parent('beach-sketch');
         p.noStroke();
       };
 
@@ -170,8 +174,8 @@
       };
 
       p.windowResized = function () {
-        const container = document.getElementById('beach-sketch');
-        p.resizeCanvas(container.offsetWidth, container.offsetHeight);
+        const el = document.getElementById('beach-sketch');
+        p.resizeCanvas(el.offsetWidth, el.offsetHeight);
       };
     });
   </script>
