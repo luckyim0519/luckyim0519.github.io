@@ -487,15 +487,14 @@ footer {
 .nav-hamburger.open span:nth-child(2) { opacity: 0; }
 .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* mobile dropdown menu */
+/* mobile dropdown menu — sits below the nav bar, never covers it */
 .nav-mobile-menu {
   display: none;
   position: fixed;
-  top: 0; left: 0; right: 0;
-  padding-top: 68px;
+  top: 65px; left: 0; right: 0;
   background: rgba(255,255,255,0.97);
   backdrop-filter: blur(16px);
-  z-index: 105;
+  z-index: 99; /* below nav (z-index:100) so LI logo stays visible */
   flex-direction: column;
   align-items: center;
   border-bottom: 1px solid var(--border);
