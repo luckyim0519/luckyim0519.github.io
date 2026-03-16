@@ -7,7 +7,7 @@ const nav = document.getElementById('nav');
 if (nav) {
   window.addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 40);
-  });
+  }, { passive: true });
 }
 
 // Active nav link based on current page
