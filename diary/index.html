@@ -52,78 +52,148 @@
 
   <script src="../js/main.js"></script>
 
-  <!-- p5.js sea waves -->
-  <canvas id="wave-canvas"></canvas>
+  <!-- p5.js sea beach -->
   <style>
-    #wave-canvas {
+    #beach-sketch {
       position: fixed;
       bottom: 0;
       right: 0;
       width: 55vw;
-      height: 38vh;
+      height: 42vh;
       pointer-events: none;
       z-index: 0;
     }
+    #beach-sketch canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+  <div id="beach-sketch"></div>
+  <script src="../js/p5.min.js"></script>
   <script>
-    (function () {
-      const canvas = document.getElementById('wave-canvas');
+    new p5(function (p) {
+      // --- pixel art config ---
+      const PX = 6;          // pixel block size (px)
+      let cols, rows;
+      let t = 0;
 
-      new p5(function (p) {
-        let t = 0;
+      // hard pixel-art palette
+      const SKY   = [ [10,  14,  40], [12,  20,  60], [15,  30,  80], [18,  45, 105] ];
+      const SEA   = [
+        [  8,  28,  90],   // darkest deep
+        [ 12,  55, 140],
+        [ 18,  90, 180],
+        [ 30, 130, 210],
+        [ 55, 170, 230],
+        [100, 210, 245],   // lightest crest
+      ];
+      const FOAM  = [220, 240, 255];
+      const SAND  = [ [195, 165, 100], [210, 180, 115], [225, 195, 130] ];
 
-        const waves = [
-          { amp: 18, period: 0.018, speed: 0.022, yOff: 0.62, alpha: 80,  color: [135, 206, 235] },
-          { amp: 14, period: 0.022, speed: 0.018, yOff: 0.70, alpha: 100, color: [100, 185, 225] },
-          { amp: 20, period: 0.015, speed: 0.028, yOff: 0.78, alpha: 130, color: [70,  160, 215] },
-          { amp: 12, period: 0.025, speed: 0.015, yOff: 0.86, alpha: 160, color: [50,  140, 200] },
-          { amp: 10, period: 0.030, speed: 0.012, yOff: 0.93, alpha: 200, color: [30,  120, 185] },
-        ];
+      // wave layers (rows from top, frac of rows)
+      const WAVE_LAYERS = [
+        { base: 0.42, amp: 1.8, freq: 0.22, spd: 0.055, crestH: 2, col: 1 },
+        { base: 0.52, amp: 2.2, freq: 0.18, spd: 0.070, crestH: 2, col: 2 },
+        { base: 0.62, amp: 2.8, freq: 0.15, spd: 0.090, crestH: 3, col: 3 },
+        { base: 0.72, amp: 3.2, freq: 0.13, spd: 0.110, crestH: 3, col: 4 },
+        { base: 0.82, amp: 3.6, freq: 0.11, spd: 0.130, crestH: 4, col: 5 },
+      ];
 
-        p.setup = function () {
-          const c = p.createCanvas(canvas.offsetWidth, canvas.offsetHeight);
-          c.parent(canvas.parentElement);
-          canvas.remove();
-          c.elt.style.cssText = `
-            position: fixed; bottom: 0; right: 0;
-            width: 55vw; height: 38vh;
-            pointer-events: none; z-index: 0;
-          `;
-          p.noStroke();
-        };
+      function px(col, row, color) {
+        p.fill(color[0], color[1], color[2]);
+        p.rect(col * PX, row * PX, PX, PX);
+      }
 
-        p.draw = function () {
-          p.clear();
-          t += 1;
+      p.setup = function () {
+        const container = document.getElementById('beach-sketch');
+        const c = p.createCanvas(container.offsetWidth, container.offsetHeight);
+        c.parent('beach-sketch');
+        cols = Math.ceil(p.width  / PX);
+        rows = Math.ceil(p.height / PX);
+        p.noStroke();
+        p.frameRate(18); // lower fps = chunkier pixel-art feel
+      };
 
-          for (const w of waves) {
-            const baseY = p.height * w.yOff;
-            p.fill(w.color[0], w.color[1], w.color[2], w.alpha);
-            p.beginShape();
-            p.vertex(0, p.height);
+      p.draw = function () {
+        p.clear();
+        t += 1;
 
-            // fade-in mask: wave starts from right edge, tapers off toward left
-            for (let x = 0; x <= p.width; x += 4) {
-              const fade   = p.map(x, 0, p.width * 0.45, 0, 1, true);
-              const amp    = w.amp * fade;
-              const y      = baseY + p.sin(x * w.period + t * w.speed) * amp;
-              p.vertex(x, y);
+        // build a grid: for each column compute the wave surface row
+        const surf = new Array(cols); // surface row per col per layer
+        const layerSurfs = WAVE_LAYERS.map(w => {
+          const arr = new Float32Array(cols);
+          for (let c = 0; c < cols; c++) {
+            // sawtooth-ish crashing: sin pushed into a crest by squaring
+            const raw = Math.sin(c * w.freq - t * w.spd)
+                      + 0.5 * Math.sin(c * w.freq * 2.1 - t * w.spd * 1.4);
+            // bias the trough up — makes waves look like they crash hard
+            const biased = (raw + 1.5) / 2.5;
+            arr[c] = (w.base + (biased - 0.5) * (w.amp / rows)) * rows;
+          }
+          return arr;
+        });
+
+        const sandRow = Math.floor(rows * 0.85);
+
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            // sky
+            if (r < Math.floor(rows * 0.40)) {
+              const skyIdx = Math.floor(p.map(r, 0, rows * 0.40, 0, SKY.length - 1));
+              px(c, r, SKY[skyIdx]);
+              continue;
             }
 
-            p.vertex(p.width, p.height);
-            p.endShape(p.CLOSE);
-          }
-        };
+            // sand
+            if (r >= sandRow) {
+              const sandIdx = Math.min(Math.floor(p.map(r, sandRow, rows, 0, SAND.length)), SAND.length - 1);
+              px(c, r, SAND[sandIdx]);
+              continue;
+            }
 
-        p.windowResized = function () {
-          p.resizeCanvas(
-            p.canvas.parentElement.offsetWidth * 0.55,
-            p.canvas.parentElement.offsetHeight * 0.38
-          );
-        };
-      });
-    })();
+            // find which wave layer owns this pixel
+            let drawn = false;
+            for (let li = WAVE_LAYERS.length - 1; li >= 0; li--) {
+              const w   = WAVE_LAYERS[li];
+              const srf = layerSurfs[li][c];
+              if (r >= srf) {
+                // inside wave body
+                const depth = r - srf;
+                const colIdx = Math.min(li, SEA.length - 2);
+                if (depth < w.crestH) {
+                  // crest rows — foam/white
+                  const foamAmt = 1 - depth / w.crestH;
+                  const base = SEA[colIdx + 1];
+                  const blended = [
+                    Math.round(p.lerp(base[0], FOAM[0], foamAmt * 0.85)),
+                    Math.round(p.lerp(base[1], FOAM[1], foamAmt * 0.85)),
+                    Math.round(p.lerp(base[2], FOAM[2], foamAmt * 0.85)),
+                  ];
+                  px(c, r, blended);
+                } else {
+                  px(c, r, SEA[colIdx]);
+                }
+                drawn = true;
+                break;
+              }
+            }
+
+            if (!drawn) {
+              // open water between sky and first wave — deep sea
+              px(c, r, SEA[0]);
+            }
+          }
+        }
+      };
+
+      p.windowResized = function () {
+        const container = document.getElementById('beach-sketch');
+        p.resizeCanvas(container.offsetWidth, container.offsetHeight);
+        cols = Math.ceil(p.width  / PX);
+        rows = Math.ceil(p.height / PX);
+      };
+    });
   </script>
 </body>
 </html>
