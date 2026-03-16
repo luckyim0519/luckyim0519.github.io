@@ -52,16 +52,16 @@
 
   <script src="../js/main.js"></script>
 
-  <!-- p5.js sea beach -->
+  <!-- p5.js pixel-art sea — full-width top-half background -->
   <style>
     #beach-sketch {
       position: fixed;
-      bottom: 0;
-      right: 0;
-      width: 55vw;
-      height: 42vh;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 50vh;
       pointer-events: none;
-      z-index: 0;
+      z-index: -1;
     }
     #beach-sketch canvas {
       display: block;
@@ -73,106 +73,145 @@
   <script src="../js/p5.min.js"></script>
   <script>
     new p5(function (p) {
-      // --- pixel art config ---
-      const PX = 6;          // pixel block size (px)
-      let cols, rows;
-      let t = 0;
+      const PX = 6;
+      let cols, rows, t = 0;
 
-      // hard pixel-art palette
-      const SKY   = [ [10,  14,  40], [12,  20,  60], [15,  30,  80], [18,  45, 105] ];
-      const SEA   = [
-        [  8,  28,  90],   // darkest deep
-        [ 12,  55, 140],
-        [ 18,  90, 180],
-        [ 30, 130, 210],
-        [ 55, 170, 230],
-        [100, 210, 245],   // lightest crest
+      // pixel-art palette — deep navy to bright cyan
+      const SKY = [
+        [ 8,  12,  35],
+        [10,  18,  55],
+        [13,  28,  78],
+        [16,  40, 100],
+        [20,  55, 125],
       ];
-      const FOAM  = [220, 240, 255];
-      const SAND  = [ [195, 165, 100], [210, 180, 115], [225, 195, 130] ];
+      const SEA = [
+        [  6,  22,  75],  // 0 — abyss
+        [ 10,  48, 125],  // 1
+        [ 16,  82, 168],  // 2
+        [ 26, 120, 200],  // 3
+        [ 48, 160, 225],  // 4
+        [ 90, 205, 248],  // 5 — surface
+      ];
+      const FOAM      = [210, 238, 255];
+      const GLINT_CLR = [255, 255, 255]; // specular light reflections
 
-      // wave layers (rows from top, frac of rows)
-      const WAVE_LAYERS = [
-        { base: 0.42, amp: 1.8, freq: 0.22, spd: 0.055, crestH: 2, col: 1 },
-        { base: 0.52, amp: 2.2, freq: 0.18, spd: 0.070, crestH: 2, col: 2 },
-        { base: 0.62, amp: 2.8, freq: 0.15, spd: 0.090, crestH: 3, col: 3 },
-        { base: 0.72, amp: 3.2, freq: 0.13, spd: 0.110, crestH: 3, col: 4 },
-        { base: 0.82, amp: 3.6, freq: 0.11, spd: 0.130, crestH: 4, col: 5 },
+      // wave layers — base is fraction of rows, amp in rows
+      const LAYERS = [
+        { base: 0.18, amp: 1.2, freq: 0.14, spd: 0.032, crest: 1, seaCol: 0 },
+        { base: 0.30, amp: 1.6, freq: 0.17, spd: 0.045, crest: 2, seaCol: 1 },
+        { base: 0.44, amp: 2.0, freq: 0.13, spd: 0.058, crest: 2, seaCol: 2 },
+        { base: 0.57, amp: 2.5, freq: 0.11, spd: 0.072, crest: 3, seaCol: 3 },
+        { base: 0.70, amp: 3.0, freq: 0.09, spd: 0.088, crest: 3, seaCol: 4 },
+        { base: 0.83, amp: 3.4, freq: 0.08, spd: 0.105, crest: 4, seaCol: 5 },
       ];
 
-      function px(col, row, color) {
-        p.fill(color[0], color[1], color[2]);
-        p.rect(col * PX, row * PX, PX, PX);
+      // glint points: sparse bright pixels that shimmer on the water surface
+      let glints = [];
+      function initGlints(n) {
+        glints = [];
+        for (let i = 0; i < n; i++) {
+          glints.push({
+            col:    Math.floor(Math.random() * cols),
+            layer:  Math.floor(Math.random() * LAYERS.length),
+            phase:  Math.random() * Math.PI * 2,
+            freq:   0.04 + Math.random() * 0.06,
+          });
+        }
+      }
+
+      function drawPx(c, r, color, alpha) {
+        if (alpha !== undefined) p.fill(color[0], color[1], color[2], alpha);
+        else                     p.fill(color[0], color[1], color[2]);
+        p.rect(c * PX, r * PX, PX, PX);
       }
 
       p.setup = function () {
-        const container = document.getElementById('beach-sketch');
-        const c = p.createCanvas(container.offsetWidth, container.offsetHeight);
-        c.parent('beach-sketch');
+        const el = document.getElementById('beach-sketch');
+        p.createCanvas(el.offsetWidth, el.offsetHeight).parent('beach-sketch');
         cols = Math.ceil(p.width  / PX);
         rows = Math.ceil(p.height / PX);
         p.noStroke();
-        p.frameRate(18); // lower fps = chunkier pixel-art feel
+        p.frameRate(18);
+        initGlints(Math.floor(cols * 0.18));
       };
 
       p.draw = function () {
         p.clear();
         t += 1;
 
-        // build a grid: for each column compute the wave surface row
-        const surf = new Array(cols); // surface row per col per layer
-        const layerSurfs = WAVE_LAYERS.map(w => {
+        // pre-compute surface row for every layer × column
+        const surfs = LAYERS.map(w => {
           const arr = new Float32Array(cols);
           for (let c = 0; c < cols; c++) {
-            // sawtooth-ish crashing: sin pushed into a crest by squaring
             const raw = Math.sin(c * w.freq - t * w.spd)
-                      + 0.5 * Math.sin(c * w.freq * 2.1 - t * w.spd * 1.4);
-            // bias the trough up — makes waves look like they crash hard
-            const biased = (raw + 1.5) / 2.5;
+                      + 0.45 * Math.sin(c * w.freq * 2.3 - t * w.spd * 1.5)
+                      + 0.2  * Math.sin(c * w.freq * 3.7 - t * w.spd * 0.8);
+            const biased = (raw + 1.65) / 3.3; // 0–1, biased upward = crashing
             arr[c] = (w.base + (biased - 0.5) * (w.amp / rows)) * rows;
           }
           return arr;
         });
 
-        const sandRow = Math.floor(rows * 0.85);
+        // glint visibility: which (layer, col) pairs are lit this frame
+        const glintSet = new Set();
+        for (const g of glints) {
+          const vis = (Math.sin(t * g.freq + g.phase) + 1) / 2; // 0–1
+          if (vis > 0.68) {
+            // glint rides the surface of its layer
+            const srf = surfs[g.layer][g.col];
+            glintSet.add(`${g.col},${Math.round(srf)}`);
+          }
+        }
+
+        const skyBand = Math.floor(rows * 0.22);
 
         for (let r = 0; r < rows; r++) {
           for (let c = 0; c < cols; c++) {
-            // sky
-            if (r < Math.floor(rows * 0.40)) {
-              const skyIdx = Math.floor(p.map(r, 0, rows * 0.40, 0, SKY.length - 1));
-              px(c, r, SKY[skyIdx]);
+
+            // --- sky band at top ---
+            if (r < skyBand) {
+              const idx = Math.min(
+                Math.floor(p.map(r, 0, skyBand, 0, SKY.length - 1)),
+                SKY.length - 1
+              );
+              drawPx(c, r, SKY[idx]);
               continue;
             }
 
-            // sand
-            if (r >= sandRow) {
-              const sandIdx = Math.min(Math.floor(p.map(r, sandRow, rows, 0, SAND.length)), SAND.length - 1);
-              px(c, r, SAND[sandIdx]);
-              continue;
-            }
-
-            // find which wave layer owns this pixel
+            // --- find owning wave layer (front-most wins) ---
             let drawn = false;
-            for (let li = WAVE_LAYERS.length - 1; li >= 0; li--) {
-              const w   = WAVE_LAYERS[li];
-              const srf = layerSurfs[li][c];
+            for (let li = LAYERS.length - 1; li >= 0; li--) {
+              const w   = LAYERS[li];
+              const srf = surfs[li][c];
               if (r >= srf) {
-                // inside wave body
                 const depth = r - srf;
-                const colIdx = Math.min(li, SEA.length - 2);
-                if (depth < w.crestH) {
-                  // crest rows — foam/white
-                  const foamAmt = 1 - depth / w.crestH;
-                  const base = SEA[colIdx + 1];
-                  const blended = [
-                    Math.round(p.lerp(base[0], FOAM[0], foamAmt * 0.85)),
-                    Math.round(p.lerp(base[1], FOAM[1], foamAmt * 0.85)),
-                    Math.round(p.lerp(base[2], FOAM[2], foamAmt * 0.85)),
-                  ];
-                  px(c, r, blended);
+
+                // specular glint — single bright pixel at the crest
+                if (depth === 0 && glintSet.has(`${c},${Math.round(srf)}`)) {
+                  drawPx(c, r, GLINT_CLR);
+                  drawn = true;
+                  break;
+                }
+
+                if (depth < w.crest) {
+                  // foam / breaking crest — white blended into sea color
+                  const foamT = 1 - depth / w.crest;
+                  const base  = SEA[Math.min(w.seaCol + 1, SEA.length - 1)];
+                  drawPx(c, r, [
+                    Math.round(p.lerp(base[0], FOAM[0], foamT * 0.9)),
+                    Math.round(p.lerp(base[1], FOAM[1], foamT * 0.9)),
+                    Math.round(p.lerp(base[2], FOAM[2], foamT * 0.9)),
+                  ]);
                 } else {
-                  px(c, r, SEA[colIdx]);
+                  // wave body — add subtle horizontal light-streak reflection
+                  // every ~4 rows inside the wave, lighten slightly
+                  const streak = ((r + c) % 5 === 0) ? 18 : 0;
+                  const base   = SEA[w.seaCol];
+                  drawPx(c, r, [
+                    Math.min(base[0] + streak, 255),
+                    Math.min(base[1] + streak, 255),
+                    Math.min(base[2] + streak, 255),
+                  ]);
                 }
                 drawn = true;
                 break;
@@ -180,18 +219,19 @@
             }
 
             if (!drawn) {
-              // open water between sky and first wave — deep sea
-              px(c, r, SEA[0]);
+              // deep open water below sky, above first wave
+              drawPx(c, r, SEA[0]);
             }
           }
         }
       };
 
       p.windowResized = function () {
-        const container = document.getElementById('beach-sketch');
-        p.resizeCanvas(container.offsetWidth, container.offsetHeight);
+        const el = document.getElementById('beach-sketch');
+        p.resizeCanvas(el.offsetWidth, el.offsetHeight);
         cols = Math.ceil(p.width  / PX);
         rows = Math.ceil(p.height / PX);
+        initGlints(Math.floor(cols * 0.18));
       };
     });
   </script>
