@@ -313,8 +313,8 @@ section { padding: 120px 60px; }
 }
 .project-impact-label { font-size: 0.8rem; color: var(--muted); }
 
-/* ── DIARY PAGE ── */
-#diary-page { padding-top: 160px; min-height: 100vh; background: var(--off); }
+/* ── ART PAGE ── */
+#art-page { padding-top: 160px; min-height: 100vh; background: var(--off); }
 
 .diary-entry {
   max-width: 640px;
@@ -357,7 +357,7 @@ section { padding: 120px 60px; }
   padding: 120px 60px 80px;
 }
 
-#diary-preview {
+#art-preview {
   background: var(--off);
   padding: 120px 60px 80px;
 }
@@ -389,7 +389,7 @@ section { padding: 120px 60px; }
   margin-bottom: 0;
 }
 
-#diary-preview .diary-entry {
+#art-preview .diary-entry {
   border-bottom: none;
   margin-bottom: 0;
   padding-bottom: 0;
@@ -527,7 +527,7 @@ nav { z-index: 300 !important; }
   nav { padding: 20px 24px; }
   .nav-links { display: none; }
   .nav-hamburger { display: flex; }
-  section, #about-page, #projects-page, #diary-page { padding: 100px 24px 60px; }
+  section, #about-page, #projects-page, #art-page { padding: 100px 24px 60px; }
   #hero { padding: 0 24px; }
   #about-page { grid-template-columns: 1fr; gap: 48px; }
   .about-right { padding-top: 0; }

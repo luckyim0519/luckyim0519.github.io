@@ -9,7 +9,7 @@ if (hamburger) {
   const mobileMenu = document.createElement('div');
   mobileMenu.className = 'nav-mobile-menu';
   mobileMenu.id = 'nav-mobile-menu';
-  ['About|/about', 'Projects|/projects', 'Diary|/diary'].forEach(item => {
+  ['About|/about', 'Projects|/projects', 'Art|/art'].forEach(item => {
     const [label, href] = item.split('|');
     const a = document.createElement('a');
     a.href = href;
@@ -58,7 +58,7 @@ document.querySelectorAll('.nav-links a').forEach(link => {
     (path.endsWith('/') || path.endsWith('index.html')) && href === '/' ||
     path.includes('/about') && href.includes('about') ||
     path.includes('/projects') && href.includes('projects') ||
-    path.includes('/diary') && href.includes('diary')
+    path.includes('/art') && href.includes('art')
   ) {
     link.classList.add('active');
   }

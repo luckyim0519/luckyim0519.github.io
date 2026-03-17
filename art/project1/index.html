@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lucky Im — Project 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/style.css" />
+
+  <style>
+    #winter-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: -1;
+      pointer-events: none;
+    }
+    body { background: transparent; }
+    #project-page { background: transparent; max-width: 720px; margin: 0 auto; padding: 120px 32px 80px; }
+
+    nav {
+      background: rgba(6, 14, 40, 0.55);
+      backdrop-filter: blur(6px);
+      border-color: rgba(255,255,255,0.08);
+    }
+    .nav-logo,
+    .nav-links a { color: rgba(255,255,255,0.85); }
+    .nav-links a:hover,
+    .nav-links a.active { color: #ffffff; }
+    .nav-hamburger span { background: rgba(255,255,255,0.9); }
+    .nav-mobile-menu {
+      background: rgba(6, 14, 40, 0.97);
+      border-color: rgba(255,255,255,0.08);
+    }
+    .nav-mobile-menu a { color: rgba(180,220,255,0.75); border-color: rgba(255,255,255,0.08); }
+    .nav-mobile-menu a:hover,
+    .nav-mobile-menu a.active { color: #ffffff; }
+
+    .project-back {
+      display: inline-block;
+      margin-bottom: 32px;
+      color: rgba(180, 220, 255, 0.7);
+      font-size: 0.85rem;
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      transition: color 0.2s;
+    }
+    .project-back:hover { color: #ffffff; }
+
+    .project-card {
+      background: rgba(6, 14, 40, 0.55);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 10px;
+      padding: 40px 44px;
+    }
+    .project-date  { color: rgba(180, 220, 255, 0.75); font-size: 0.85rem; margin-bottom: 12px; }
+    .project-title { color: #eef4ff; font-size: 1.8rem; margin: 0 0 20px; }
+    .project-body  { color: rgba(200, 225, 250, 0.80); line-height: 1.75; }
+
+    footer {
+      background: rgba(4, 10, 30, 0.70);
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .footer-name  { color: #eef4ff; }
+    .footer-sub,
+    .footer-copy  { color: rgba(180, 210, 240, 0.6); }
+    .footer-links a { color: rgba(180, 220, 255, 0.75); }
+    .footer-links a:hover { color: #ffffff; }
+  </style>
+</head>
+<body>
+
+  <div id="winter-bg"></div>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a class="nav-logo" href="/">LI</a>
+    <ul class="nav-links">
+      <li><a href="/about">About</a></li>
+      <li><a href="/projects">Projects</a></li>
+      <li><a href="/art">Art</a></li>
+    </ul>
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- PROJECT CONTENT -->
+  <section id="project-page">
+    <a class="project-back" href="/art">← Art Projects</a>
+
+    <div class="project-card reveal">
+      <div class="project-date">March 2025</div>
+      <h1 class="project-title">Project 1</h1>
+      <div class="project-body">
+        <p>This is the project detail page. Replace this with your art project content — images, process notes, reflections, or anything you'd like to share.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-left">
+      <span class="footer-name">Lucky Im</span>
+      <span class="footer-sub">Creative engineer seeking the key to the world's bottleneck.</span>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/luckyim0519" target="_blank">GitHub</a>
+      <a href="https://www.linkedin.com/in/luckyim/?originalSubdomain=ca" target="_blank">LinkedIn</a>
+    </div>
+    <span class="footer-copy">© 2025 · Vancouver, CA</span>
+  </footer>
+
+  <script src="../../js/main.js"></script>
+  <script src="../../js/p5.min.js"></script>
+  <script>
+    new p5(function (p) {
+      const PX = 5;
+      let cols, rows, t = 0;
+
+      // ── Time-of-day scene ─────────────────────────────────────────────
+      const hour = new Date().getHours();
+      const SCENE = hour >= 6 && hour < 12 ? 'morning'
+                  : hour >= 12 && hour < 19 ? 'afternoon'
+                  : 'night';
+
+      // ── Scene palettes ────────────────────────────────────────────────
+      const SCENES = {
+        morning: {
+          skyTop:   [ 175, 200, 220 ],  // pale grey-blue
+          skyMid:   [ 200, 218, 232 ],
+          skyHor:   [ 220, 232, 242 ],
+          skyGlow:  [ 238, 242, 248 ],
+          orb:      [ 255, 248, 200 ],  // soft white-yellow sun, low
+          orbGlow:  [ 255, 228, 140 ],
+          orbR: 3, orbCX: 0.22, orbCY: 0.78,  // low on horizon
+          stars: false, aurora: false,
+          snowColor:  [ 245, 250, 255 ],
+          snowShadow: [ 175, 195, 218 ],
+        },
+        afternoon: {
+          skyTop:   [ 100, 140, 185 ],  // cool steel blue
+          skyMid:   [ 140, 172, 208 ],
+          skyHor:   [ 180, 205, 228 ],
+          skyGlow:  [ 215, 228, 242 ],
+          orb:      [ 255, 255, 225 ],  // pale sun, higher
+          orbGlow:  [ 255, 242, 180 ],
+          orbR: 3, orbCX: 0.55, orbCY: 0.28,
+          stars: false, aurora: false,
+          snowColor:  [ 248, 252, 255 ],
+          snowShadow: [ 188, 208, 228 ],
+        },
+        night: {
+          skyTop:   [   4,   6,  22 ],  // deep navy → near-black
+          skyMid:   [   8,  14,  42 ],
+          skyHor:   [  12,  22,  58 ],
+          skyGlow:  [  16,  28,  68 ],
+          orb:      [ 242, 246, 255 ],  // moon
+          orbGlow:  [ 180, 202, 242 ],
+          orbR: 3, orbCX: 0.72, orbCY: 0.22,
+          stars: true, aurora: true,
+          snowColor:  [ 218, 235, 255 ],
+          snowShadow: [  90, 115, 155 ],
+        },
+      };
+
+      const S = SCENES[SCENE];
+
+      // ── Aurora bands (night only) ─────────────────────────────────────
+      const AURORA_BANDS = [
+        { phase: 0.0,  amp: 0.038, freq: 0.016, spd: 0.007, yBase: 0.28, r: 25,  g: 185, b: 120 },
+        { phase: 2.1,  amp: 0.028, freq: 0.022, spd: 0.010, yBase: 0.36, r: 18,  g: 205, b: 145 },
+        { phase: 4.3,  amp: 0.045, freq: 0.013, spd: 0.005, yBase: 0.22, r: 38,  g: 162, b: 165 },
+      ];
+
+      // ── Tree definitions: [cx fraction, height fraction] ─────────────
+      const TREE_DEFS = [
+        { cx: 0.06, h: 0.24 },
+        { cx: 0.16, h: 0.18 },
+        { cx: 0.28, h: 0.26 },
+        { cx: 0.38, h: 0.16 },
+        { cx: 0.64, h: 0.20 },
+        { cx: 0.76, h: 0.28 },
+        { cx: 0.88, h: 0.17 },
+      ];
+
+      // ── Snowflakes ────────────────────────────────────────────────────
+      const SNOW_COUNT = 200;
+      let snowflakes = [];
+
+      let splashEnergy = 0;
+      let lastScrollY = window.scrollY;
+
+      window.addEventListener('scroll', () => {
+        const dy = Math.abs(window.scrollY - lastScrollY);
+        lastScrollY = window.scrollY;
+        splashEnergy = Math.min(splashEnergy + dy * 0.025, 1.0);
+      }, { passive: true });
+
+      function initSnow() {
+        snowflakes = [];
+        for (let i = 0; i < SNOW_COUNT; i++) {
+          snowflakes.push({
+            x:     Math.random() * cols,
+            y:     Math.random() * rows,
+            spd:   0.18 + Math.random() * 0.38,
+            drift: (Math.random() - 0.5) * 0.14,
+            size:  Math.random() < 0.62 ? 1 : 2,
+          });
+        }
+      }
+
+      function drawPx(c, r, col) {
+        p.fill(col[0], col[1], col[2]);
+        p.rect(c * PX, r * PX, PX, PX);
+      }
+
+      function skyColor(r, skyRows) {
+        const horRows = Math.floor(skyRows * 0.88);
+        if (r >= horRows) {
+          const pct = (r - horRows) / (skyRows - horRows);
+          return [
+            Math.round(p.lerp(S.skyMid[0], S.skyGlow[0], pct)),
+            Math.round(p.lerp(S.skyMid[1], S.skyGlow[1], pct)),
+            Math.round(p.lerp(S.skyMid[2], S.skyGlow[2], pct)),
+          ];
+        }
+        const pct = r / horRows;
+        return [
+          Math.round(p.lerp(S.skyTop[0], S.skyMid[0], pct)),
+          Math.round(p.lerp(S.skyTop[1], S.skyMid[1], pct)),
+          Math.round(p.lerp(S.skyTop[2], S.skyMid[2], pct)),
+        ];
+      }
+
+      // Draw a pixel-art pine tree silhouette
+      // cx: center column, base: bottom row, h: total height in pixel-rows
+      function drawTree(cx, base, h) {
+        const LAYERS = 3;
+        for (let layer = 0; layer < LAYERS; layer++) {
+          const layerH   = Math.max(3, Math.floor(h * 0.48));
+          const layerBase = base - layer * Math.floor(h * 0.36);
+          const maxW     = Math.max(1, Math.round(h * 0.30 - layer * 1.2));
+          for (let row = 0; row < layerH; row++) {
+            const r = layerBase - row;
+            if (r < 0 || r >= rows) continue;
+            const w = Math.max(0, Math.floor(maxW * (1 - row / layerH)));
+            for (let dc = -w; dc <= w; dc++) {
+              const c = cx + dc;
+              if (c < 0 || c >= cols) continue;
+              // Snow cap: top 2 rows of each triangle layer
+              if (row >= layerH - 2) {
+                drawPx(c, r, [215, 232, 248]);
+              } else {
+                drawPx(c, r, [20, 28, 40]);
+              }
+            }
+          }
+        }
+        // Trunk
+        const trunkH = Math.max(1, Math.floor(h * 0.10));
+        for (let row = 0; row < trunkH; row++) {
+          const r = base + row;
+          if (r >= rows) break;
+          drawPx(cx, r, [35, 22, 14]);
+        }
+      }
+
+      p.setup = function () {
+        const el = document.getElementById('winter-bg');
+        p.createCanvas(el.offsetWidth, el.offsetHeight).parent('winter-bg');
+        cols = Math.ceil(p.width  / PX);
+        rows = Math.ceil(p.height / PX);
+        p.noStroke();
+        p.frameRate(18);
+        initSnow();
+      };
+
+      p.draw = function () {
+        p.clear();
+        t += 1;
+        splashEnergy *= 0.94;
+
+        const groundRow = Math.floor(rows * 0.85);
+        const orbCX     = Math.floor(cols * S.orbCX);
+        const orbCY     = Math.floor(rows * S.orbCY);
+
+        // ── Pixel grid: sky + ground ──────────────────────────────────
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+
+            // ── Ground (bottom 15%) ──
+            if (r >= groundRow) {
+              const pct = (r - groundRow) / (rows - groundRow);
+              drawPx(c, r, [
+                Math.round(p.lerp(S.snowColor[0], S.snowShadow[0], pct)),
+                Math.round(p.lerp(S.snowColor[1], S.snowShadow[1], pct)),
+                Math.round(p.lerp(S.snowColor[2], S.snowShadow[2], pct)),
+              ]);
+              continue;
+            }
+
+            // ── Sky ──
+            const dc = c - orbCX, dr = r - orbCY;
+            const dist = Math.sqrt(dc * dc + dr * dr);
+
+            if (dist <= S.orbR) {
+              drawPx(c, r, S.orb);
+            } else if (dist <= S.orbR + 2) {
+              drawPx(c, r, S.orbGlow);
+            } else if (dist <= S.orbR + 6) {
+              const sk    = skyColor(r, groundRow);
+              const blend = 1 - (dist - S.orbR - 2) / 4;
+              drawPx(c, r, [
+                Math.round(p.lerp(sk[0], S.orbGlow[0], blend * 0.5)),
+                Math.round(p.lerp(sk[1], S.orbGlow[1], blend * 0.5)),
+                Math.round(p.lerp(sk[2], S.orbGlow[2], blend * 0.5)),
+              ]);
+            } else if (S.aurora && r < Math.floor(groundRow * 0.62)) {
+              // Aurora: blend wavy bands into sky
+              let sk = skyColor(r, groundRow);
+              for (const band of AURORA_BANDS) {
+                const bandY   = Math.floor((band.yBase + Math.sin(c * band.freq + t * band.spd + band.phase) * band.amp) * groundRow);
+                const bandDist = Math.abs(r - bandY);
+                if (bandDist < 4) {
+                  const alpha = 0.48 * (1 - bandDist / 4);
+                  sk = [
+                    Math.round(p.lerp(sk[0], band.r, alpha)),
+                    Math.round(p.lerp(sk[1], band.g, alpha)),
+                    Math.round(p.lerp(sk[2], band.b, alpha)),
+                  ];
+                }
+              }
+              drawPx(c, r, sk);
+            } else if (S.stars) {
+              const seed = (c * 7919 + r * 6271) % 1000;
+              if (r < Math.floor(groundRow * 0.55) && seed < 12) {
+                const twinkle = (Math.sin(t * 0.06 + seed) + 1) / 2;
+                const bright  = Math.round(180 + twinkle * 75);
+                drawPx(c, r, [bright, bright, Math.min(bright + 22, 255)]);
+              } else {
+                drawPx(c, r, skyColor(r, groundRow));
+              }
+            } else {
+              drawPx(c, r, skyColor(r, groundRow));
+            }
+          }
+        }
+
+        // ── Pine tree silhouettes ─────────────────────────────────────
+        for (const tree of TREE_DEFS) {
+          drawTree(
+            Math.floor(tree.cx * cols),
+            groundRow - 1,
+            Math.floor(tree.h  * rows)
+          );
+        }
+
+        // ── Ground sparkles ───────────────────────────────────────────
+        for (let i = 0; i < Math.floor(cols * 0.07); i++) {
+          const c = (i * 3571) % cols;
+          const v = (Math.sin(t * 0.09 + i * 1.73) + 1) / 2;
+          if (v > 0.84) {
+            drawPx(c, groundRow, [255, 255, 255]);
+          }
+        }
+
+        // ── Falling snow ──────────────────────────────────────────────
+        const speedMult = 1 + splashEnergy * 0.6;
+        const driftMult = 1 + splashEnergy * 0.4;
+        p.fill(255, 255, 255);
+        for (const sf of snowflakes) {
+          sf.y += sf.spd * speedMult;
+          sf.x += sf.drift * driftMult;
+          if (sf.y > rows)  { sf.y = 0; sf.x = Math.random() * cols; }
+          if (sf.x < 0)      sf.x += cols;
+          if (sf.x >= cols)  sf.x -= cols;
+          p.rect(Math.floor(sf.x) * PX, Math.floor(sf.y) * PX, sf.size * PX, sf.size * PX);
+        }
+      };
+
+      p.windowResized = function () {
+        const el = document.getElementById('winter-bg');
+        p.resizeCanvas(el.offsetWidth, el.offsetHeight);
+        cols = Math.ceil(p.width  / PX);
+        rows = Math.ceil(p.height / PX);
+        initSnow();
+      };
+    });
+  </script>
+</body>
+</html>
