@@ -12,12 +12,19 @@
   <style>
     body { background: var(--off); }
 
-    /* ── outer layout: 3 cols — label | AI | SW ── */
+    /* ── outer: two independent tree blocks side by side ── */
     .study-layout {
       display: grid;
-      grid-template-columns: 28px 1fr 1fr;
-      align-items: center;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
       margin-top: 8px;
+    }
+
+    /* ── each tree block: [label col | content col] ── */
+    .tree-block {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      align-items: center;
     }
 
     /* ── left label cells ── */
@@ -25,7 +32,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      align-self: stretch;   /* fill the row height */
+      align-self: stretch;
     }
     .depth-label {
       font-family: 'Source Code Pro', monospace;
@@ -37,11 +44,8 @@
       transform: rotate(180deg); /* reads upward */
     }
 
-    /* ── root row ── */
-    .tree-root-cell {
-      display: flex;
-      justify-content: center;
-    }
+    /* ── root ── */
+    .tree-root-cell { display: flex; justify-content: center; }
     .tree-root {
       font-family: 'Libre Barcode 128 Text', cursive;
       font-size: 2.2rem;
@@ -50,11 +54,8 @@
       text-align: center;
     }
 
-    /* ── branch SVG row ── */
-    .branch-cell {
-      display: flex;
-      justify-content: center;
-    }
+    /* ── branch SVG ── */
+    .branch-cell { display: flex; justify-content: center; }
     .branch-svg {
       width: 180px;
       height: 64px;
@@ -72,7 +73,7 @@
       padding: 4px 0;
     }
 
-    /* ── sub-branch SVG row ── */
+    /* ── sub-branch SVG ── */
     .sub-cell {
       display: flex;
       justify-content: space-between;
@@ -118,13 +119,7 @@
 
     /* ── responsive ── */
     @media (max-width: 768px) {
-      /* drop label col, keep AI + SW side by side */
-      .study-layout { grid-template-columns: 1fr 1fr; }
-      .row-label, .row-empty { display: none; }
-    }
-    @media (max-width: 480px) {
-      /* stack trees vertically */
-      .study-layout { grid-template-columns: 1fr; }
+      .study-layout { grid-template-columns: 1fr; gap: 64px; }
     }
   </style>
 </head>
@@ -146,71 +141,84 @@
   <section id="study-page">
     <div class="section-label reveal">Study</div>
 
-    <div class="study-layout reveal">
+    <div class="study-layout">
 
-      <!-- ── Row 1: roots ── -->
-      <div class="row-empty"></div>
-      <div class="tree-root-cell"><span class="tree-root">#AI</span></div>
-      <div class="tree-root-cell"><span class="tree-root">#SW</span></div>
+      <!-- ══ #AI tree block ══ -->
+      <div class="tree-block reveal">
+        <!-- root -->
+        <div class="row-empty"></div>
+        <div class="tree-root-cell"><span class="tree-root">#AI</span></div>
 
-      <!-- ── Row 2: branch SVGs ── -->
-      <div class="row-empty"></div>
-      <div class="branch-cell">
-        <svg class="branch-svg" viewBox="0 0 180 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <line x1="90" y1="0" x2="32"  y2="64" stroke="currentColor" stroke-width="1"/>
-          <line x1="90" y1="0" x2="148" y2="64" stroke="currentColor" stroke-width="1"/>
-        </svg>
-      </div>
-      <div class="branch-cell">
-        <svg class="branch-svg" viewBox="0 0 180 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <line x1="90" y1="0" x2="32"  y2="64" stroke="currentColor" stroke-width="1"/>
-          <line x1="90" y1="0" x2="148" y2="64" stroke="currentColor" stroke-width="1"/>
-        </svg>
-      </div>
+        <!-- branch lines -->
+        <div class="row-empty"></div>
+        <div class="branch-cell">
+          <svg class="branch-svg" viewBox="0 0 180 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="90" y1="0" x2="32"  y2="64" stroke="currentColor" stroke-width="1"/>
+            <line x1="90" y1="0" x2="148" y2="64" stroke="currentColor" stroke-width="1"/>
+          </svg>
+        </div>
 
-      <!-- ── Row 3: FIELD entries (depth 1) ── -->
-      <div class="row-label">
-        <span class="depth-label">Field</span>
-      </div>
-      <div class="field-cell">
-        <a class="tree-leaf" href="/study/entry1"><span class="leaf-name">Entry 1</span></a>
-        <a class="tree-leaf" href="/study/entry2"><span class="leaf-name">Entry 2</span></a>
-      </div>
-      <div class="field-cell">
-        <a class="tree-leaf" href="/study/sw/entry1"><span class="leaf-name">Entry 1</span></a>
-        <a class="tree-leaf" href="/study/sw/entry2"><span class="leaf-name">Entry 2</span></a>
-      </div>
+        <!-- FIELD row -->
+        <div class="row-label"><span class="depth-label">Field</span></div>
+        <div class="field-cell">
+          <a class="tree-leaf" href="/study/entry1"><span class="leaf-name">Entry 1</span></a>
+          <a class="tree-leaf" href="/study/entry2"><span class="leaf-name">Entry 2</span></a>
+        </div>
 
-      <!-- ── Row 4: sub-branch SVGs ── -->
-      <div class="row-empty"></div>
-      <!-- AI: line under Entry 1 (left), spacer under Entry 2 (right) -->
-      <div class="sub-cell">
-        <svg class="sub-svg" viewBox="0 0 64 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <line x1="32" y1="0" x2="32" y2="48" stroke="currentColor" stroke-width="1"/>
-        </svg>
-        <div class="cell-spacer"></div>
-      </div>
-      <!-- SW: spacer under Entry 1 (left), line under Entry 2 (right) -->
-      <div class="sub-cell">
-        <div class="cell-spacer"></div>
-        <svg class="sub-svg" viewBox="0 0 64 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <line x1="32" y1="0" x2="32" y2="48" stroke="currentColor" stroke-width="1"/>
-        </svg>
+        <!-- sub-branch: under Entry 1 (left) -->
+        <div class="row-empty"></div>
+        <div class="sub-cell">
+          <svg class="sub-svg" viewBox="0 0 64 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="32" y1="0" x2="32" y2="48" stroke="currentColor" stroke-width="1"/>
+          </svg>
+          <div class="cell-spacer"></div>
+        </div>
+
+        <!-- TOPIC row -->
+        <div class="row-label"><span class="depth-label">Topic</span></div>
+        <div class="topic-cell">
+          <a class="tree-leaf" href="/study/entry3"><span class="leaf-name">Entry 3</span></a>
+          <div class="cell-spacer"></div>
+        </div>
       </div>
 
-      <!-- ── Row 5: TOPIC entries (depth 2) ── -->
-      <div class="row-label">
-        <span class="depth-label">Topic</span>
-      </div>
-      <!-- AI: Entry 3 under Entry 1 (left), spacer under Entry 2 (right) -->
-      <div class="topic-cell">
-        <a class="tree-leaf" href="/study/entry3"><span class="leaf-name">Entry 3</span></a>
-        <div class="cell-spacer"></div>
-      </div>
-      <!-- SW: spacer under Entry 1 (left), Entry 3 under Entry 2 (right) -->
-      <div class="topic-cell">
-        <div class="cell-spacer"></div>
-        <a class="tree-leaf" href="/study/sw/entry3"><span class="leaf-name">Entry 3</span></a>
+      <!-- ══ #SW tree block ══ -->
+      <div class="tree-block reveal">
+        <!-- root -->
+        <div class="row-empty"></div>
+        <div class="tree-root-cell"><span class="tree-root">#SW</span></div>
+
+        <!-- branch lines -->
+        <div class="row-empty"></div>
+        <div class="branch-cell">
+          <svg class="branch-svg" viewBox="0 0 180 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="90" y1="0" x2="32"  y2="64" stroke="currentColor" stroke-width="1"/>
+            <line x1="90" y1="0" x2="148" y2="64" stroke="currentColor" stroke-width="1"/>
+          </svg>
+        </div>
+
+        <!-- FIELD row -->
+        <div class="row-label"><span class="depth-label">Field</span></div>
+        <div class="field-cell">
+          <a class="tree-leaf" href="/study/sw/entry1"><span class="leaf-name">Entry 1</span></a>
+          <a class="tree-leaf" href="/study/sw/entry2"><span class="leaf-name">Entry 2</span></a>
+        </div>
+
+        <!-- sub-branch: under Entry 2 (right) -->
+        <div class="row-empty"></div>
+        <div class="sub-cell">
+          <div class="cell-spacer"></div>
+          <svg class="sub-svg" viewBox="0 0 64 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="32" y1="0" x2="32" y2="48" stroke="currentColor" stroke-width="1"/>
+          </svg>
+        </div>
+
+        <!-- TOPIC row -->
+        <div class="row-label"><span class="depth-label">Topic</span></div>
+        <div class="topic-cell">
+          <div class="cell-spacer"></div>
+          <a class="tree-leaf" href="/study/sw/entry3"><span class="leaf-name">Entry 3</span></a>
+        </div>
       </div>
 
     </div>
