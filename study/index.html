@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lucky Im — Project 1</title>
+  <title>Lucky Im — Study</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../../css/style.css" />
+  <link rel="stylesheet" href="../css/style.css" />
 
   <style>
+    /* --- beach background canvas sits behind everything --- */
     #beach-bg {
       position: fixed;
       top: 0; left: 0;
@@ -17,9 +18,12 @@
       z-index: -1;
       pointer-events: none;
     }
-    body { background: transparent; }
-    #project-page { background: transparent; max-width: 720px; margin: 0 auto; padding: 120px 32px 80px; }
 
+    /* --- make body + study page transparent so the canvas shows through --- */
+    body { background: transparent; }
+    #study-page { background: transparent; }
+
+    /* --- keep nav readable --- */
     nav {
       background: rgba(8, 18, 48, 0.55);
       backdrop-filter: blur(6px);
@@ -38,28 +42,35 @@
     .nav-mobile-menu a:hover,
     .nav-mobile-menu a.active { color: #ffffff; }
 
-    .project-back {
+    /* --- section label --- */
+    .section-label { color: rgba(255,255,255,0.5); }
+    .section-label::after { background: rgba(255,255,255,0.15); }
+
+    /* --- entry cards: semi-transparent dark glass --- */
+    .diary-entry {
+      background: rgba(6, 14, 40, 0.55);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 10px;
+      padding: 32px 36px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+    .diary-date   { color: rgba(160, 210, 240, 0.75); }
+    .diary-title  { color: #e8f4ff; }
+    .diary-text   { color: rgba(200, 225, 245, 0.80); }
+    .diary-more   { color: rgba(160, 200, 230, 0.6); }
+    .diary-link {
       display: inline-block;
-      margin-bottom: 32px;
-      color: rgba(160, 210, 240, 0.7);
+      margin-top: 14px;
+      color: rgba(160, 210, 240, 0.85);
       font-size: 0.85rem;
       text-decoration: none;
       letter-spacing: 0.03em;
       transition: color 0.2s;
     }
-    .project-back:hover { color: #ffffff; }
+    .diary-link:hover { color: #ffffff; }
 
-    .project-card {
-      background: rgba(6, 14, 40, 0.55);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 10px;
-      padding: 40px 44px;
-    }
-    .project-date  { color: rgba(160, 210, 240, 0.75); font-size: 0.85rem; margin-bottom: 12px; }
-    .project-title { color: #e8f4ff; font-size: 1.8rem; margin: 0 0 20px; }
-    .project-body  { color: rgba(200, 225, 245, 0.80); line-height: 1.75; }
-
+    /* --- footer --- */
     footer {
       background: rgba(6, 12, 35, 0.70);
       border-top: 1px solid rgba(255,255,255,0.08);
@@ -73,6 +84,7 @@
 </head>
 <body>
 
+  <!-- pixel-art beach background -->
   <div id="beach-bg"></div>
 
   <!-- NAV -->
@@ -81,24 +93,28 @@
     <ul class="nav-links">
       <li><a href="/about">About</a></li>
       <li><a href="/study">Study</a></li>
-      <li><a href="/diary" class="active">Diary</a></li>
+      <li><a href="/art">Art</a></li>
     </ul>
     <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
   </nav>
 
-  <!-- PROJECT CONTENT -->
-  <section id="project-page">
-    <a class="project-back" href="/diary">← Art Projects</a>
+  <!-- STUDY ENTRIES -->
+  <!-- To add an entry: copy a diary-entry block, paste above (newest first), and create study/entryN/index.html -->
+  <section id="study-page" style="background: transparent">
+    <div class="section-label reveal">Study</div>
 
-    <div class="project-card reveal">
-      <div class="project-date">March 2025</div>
-      <h1 class="project-title">Project 1</h1>
-      <div class="project-body">
-        <p>This is the project detail page. Replace this with your art project content — images, process notes, reflections, or anything you'd like to share.</p>
-      </div>
+    <div class="diary-entry reveal">
+      <div class="diary-date">March 2026</div>
+      <h3 class="diary-title">Entry 1</h3>
+      <p class="diary-text">
+        A placeholder for the first study note. Topics, reading notes, and explorations will live here over time.
+      </p>
+      <a class="diary-link" href="/study/entry1">Read more →</a>
     </div>
+
+    <p class="diary-more reveal">More entries coming soon —</p>
   </section>
 
   <!-- FOOTER -->
@@ -114,39 +130,107 @@
     <span class="footer-copy">© 2025 · Vancouver, CA</span>
   </footer>
 
-  <script src="../../js/main.js"></script>
-  <script src="../../js/p5.min.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/p5.min.js"></script>
   <script>
     new p5(function (p) {
       const PX = 5;
       let cols, rows, t = 0;
 
+      // ── Detect time-of-day scene ──────────────────────────────────────
       const hour = new Date().getHours();
       const SCENE = hour >= 6 && hour < 12 ? 'morning'
                   : hour >= 12 && hour < 19 ? 'afternoon'
                   : 'night';
 
+      // ── Scene palettes ────────────────────────────────────────────────
       const SCENES = {
         morning: {
-          skyTop: [95,165,220], skyMid: [140,200,235], skyHor: [200,230,248], skyGlow: [230,245,255],
-          orb: [255,245,180], orbGlow: [255,210,80], orbR: 4, orbCX: 0.38, orbCY: 0.20, stars: false,
-          sea: [[18,80,140],[28,110,175],[40,145,205],[60,175,225],[90,205,240],[140,225,250]],
-          foam: [220,245,255], glint: [255,255,255],
-          sand: [[240,215,150],[225,195,125],[205,172,100],[180,148,78]], sandWet: [175,185,170],
+          skyTop:   [  95, 165, 220 ],
+          skyMid:   [ 140, 200, 235 ],
+          skyHor:   [ 200, 230, 248 ],
+          skyGlow:  [ 230, 245, 255 ],
+          orb:      [ 255, 245, 180 ],
+          orbGlow:  [ 255, 210,  80 ],
+          orbR:     4,
+          orbCX:    0.38,
+          orbCY:    0.20,
+          stars:    false,
+          sea: [
+            [  18,  80, 140 ],
+            [  28, 110, 175 ],
+            [  40, 145, 205 ],
+            [  60, 175, 225 ],
+            [  90, 205, 240 ],
+            [ 140, 225, 250 ],
+          ],
+          foam:     [ 220, 245, 255 ],
+          glint:    [ 255, 255, 255 ],
+          sand: [
+            [ 240, 215, 150 ],
+            [ 225, 195, 125 ],
+            [ 205, 172, 100 ],
+            [ 180, 148,  78 ],
+          ],
+          sandWet:  [ 175, 185, 170 ],
         },
         afternoon: {
-          skyTop: [30,30,80], skyMid: [90,60,80], skyHor: [200,95,55], skyGlow: [240,140,50],
-          orb: [255,180,60], orbGlow: [255,120,30], orbR: 5, orbCX: 0.72, orbCY: 0.38, stars: false,
-          sea: [[20,35,80],[35,65,115],[55,100,155],[85,140,185],[130,175,210],[180,210,230]],
-          foam: [255,220,180], glint: [255,240,160],
-          sand: [[220,175,95],[200,150,70],[175,125,50],[148,100,38]], sandWet: [145,130,100],
+          skyTop:   [  30,  30,  80 ],
+          skyMid:   [  90,  60,  80 ],
+          skyHor:   [ 200,  95,  55 ],
+          skyGlow:  [ 240, 140,  50 ],
+          orb:      [ 255, 180,  60 ],
+          orbGlow:  [ 255, 120,  30 ],
+          orbR:     5,
+          orbCX:    0.72,
+          orbCY:    0.38,
+          stars:    false,
+          sea: [
+            [  20,  35,  80 ],
+            [  35,  65, 115 ],
+            [  55, 100, 155 ],
+            [  85, 140, 185 ],
+            [ 130, 175, 210 ],
+            [ 180, 210, 230 ],
+          ],
+          foam:     [ 255, 220, 180 ],
+          glint:    [ 255, 240, 160 ],
+          sand: [
+            [ 220, 175,  95 ],
+            [ 200, 150,  70 ],
+            [ 175, 125,  50 ],
+            [ 148, 100,  38 ],
+          ],
+          sandWet:  [ 145, 130, 100 ],
         },
         night: {
-          skyTop: [4,5,18], skyMid: [8,12,38], skyHor: [14,22,58], skyGlow: [20,32,72],
-          orb: [240,245,255], orbGlow: [180,200,240], orbR: 4, orbCX: 0.72, orbCY: 0.28, stars: true,
-          sea: [[5,10,35],[8,20,60],[12,35,90],[18,55,120],[30,85,155],[60,130,195]],
-          foam: [190,215,240], glint: [230,242,255],
-          sand: [[155,148,130],[135,128,112],[115,108,94],[95,90,78]], sandWet: [80,92,100],
+          skyTop:   [   4,   5,  18 ],
+          skyMid:   [   8,  12,  38 ],
+          skyHor:   [  14,  22,  58 ],
+          skyGlow:  [  20,  32,  72 ],
+          orb:      [ 240, 245, 255 ],
+          orbGlow:  [ 180, 200, 240 ],
+          orbR:     4,
+          orbCX:    0.72,
+          orbCY:    0.28,
+          stars:    true,
+          sea: [
+            [  5,  10,  35 ],
+            [  8,  20,  60 ],
+            [ 12,  35,  90 ],
+            [ 18,  55, 120 ],
+            [ 30,  85, 155 ],
+            [ 60, 130, 195 ],
+          ],
+          foam:     [ 190, 215, 240 ],
+          glint:    [ 230, 242, 255 ],
+          sand: [
+            [ 155, 148, 130 ],
+            [ 135, 128, 112 ],
+            [ 115, 108,  94 ],
+            [  95,  90,  78 ],
+          ],
+          sandWet:  [ 80, 92, 100 ],
         },
       };
 
@@ -224,9 +308,9 @@
         splashEnergy *= 0.94;
 
         const surfs = WAVES.map(w => {
-          const amp = w.amp * (1 + splashEnergy * 0.8);
-          const spd = w.spd * (1 + splashEnergy * 0.6);
-          const arr = new Float32Array(cols);
+          const amp  = w.amp  * (1 + splashEnergy * 0.8);
+          const spd  = w.spd  * (1 + splashEnergy * 0.6);
+          const arr  = new Float32Array(cols);
           for (let c = 0; c < cols; c++) {
             const raw = Math.sin(c * w.freq - t * spd)
                       + 0.4 * Math.sin(c * w.freq * 2.5 - t * spd * 1.6)

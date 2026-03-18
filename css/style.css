@@ -257,6 +257,9 @@ section { padding: 120px 60px; }
 /* ── PROJECTS PAGE ── */
 #projects-page { padding-top: 160px; min-height: 100vh; }
 
+/* ── STUDY PAGE ── */
+#study-page { padding-top: 160px; min-height: 100vh; }
+
 .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
 
 .project-card {
@@ -357,6 +360,10 @@ section { padding: 120px 60px; }
   padding: 120px 60px 80px;
 }
 
+#study-preview {
+  padding: 120px 60px 80px;
+}
+
 #art-preview {
   background: var(--off);
   padding: 120px 60px 80px;
@@ -386,6 +393,10 @@ section { padding: 120px 60px; }
 .preview-link:hover { opacity: 0.5; }
 
 #projects-preview .project-card.featured {
+  margin-bottom: 0;
+}
+
+#study-preview .project-card.featured {
   margin-bottom: 0;
 }
 
@@ -527,7 +538,7 @@ nav { z-index: 300 !important; }
   nav { padding: 20px 24px; }
   .nav-links { display: none; }
   .nav-hamburger { display: flex; }
-  section, #about-page, #projects-page, #art-page { padding: 100px 24px 60px; }
+  section, #about-page, #projects-page, #study-page, #art-page { padding: 100px 24px 60px; }
   #hero { padding: 0 24px; }
   #about-page { grid-template-columns: 1fr; gap: 48px; }
   .about-right { padding-top: 0; }
