@@ -12,78 +12,83 @@
   <style>
     body { background: var(--off); }
 
-    /* ── tree layout ── */
+    /* ── page grid: two equal columns ── */
     .study-tree {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 100px;
+      gap: 80px;
       margin-top: 8px;
     }
 
     .tree-col {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
-      position: relative;
+      align-items: center;
       justify-self: center;
     }
 
-    /* ── root: plain text, no decoration ── */
+    /* ── root label ── */
     .tree-root {
       font-family: 'Libre Barcode 128 Text', cursive;
       font-size: 2.2rem;
       color: var(--ink);
       display: block;
+      text-align: center;
     }
 
-    /* ── diagonal connector ── */
-    /* Box is 40px wide × 44px tall; line length = sqrt(40²+44²) ≈ 59px at 48° */
-    .diag-connector {
-      position: relative;
-      width: 40px;
-      height: 44px;
-      margin-left: 20px; /* ~center of #AI text in Source Code Pro 1.5rem */
+    /* ── SVG branch lines ── */
+    .branch-svg {
+      width: 180px;
+      height: 64px;
+      display: block;
+      color: var(--ink);
       flex-shrink: 0;
     }
-    .diag-connector::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 57px; /* sqrt(36² + 44²) — runs 36px right, 44px down */
-      height: 1px;
-      background: var(--ink);
-      transform: rotate(51deg); /* atan(44/36) */
-      transform-origin: left center;
+
+    /* ── level-1 children row ── */
+    .leaf-row {
+      display: flex;
+      justify-content: space-between;
+      width: 180px;
+      align-items: flex-start;
     }
 
-    /* ── leaf (entry) ── */
+    /* ── leaf node ── */
     .tree-leaf {
+      font-family: 'Source Code Pro', monospace;
+      font-size: 0.8rem;
+      color: var(--ink);
       text-decoration: none;
       display: block;
-      margin-left: 56px; /* 20px start + 36px horizontal run */
+      width: 64px;
+      text-align: center;
     }
-    .leaf-title {
-      font-family: 'Source Code Pro', monospace;
-      font-size: 0.95rem;
-      color: var(--ink);
-      display: block;
-    }
-    .leaf-date {
-      font-size: 0.72rem;
-      color: var(--muted);
-      display: block;
-      margin-top: 2px;
-    }
-    .tree-leaf:hover .leaf-title {
+    .tree-leaf:hover {
       text-decoration: underline;
       text-underline-offset: 3px;
+    }
+
+    /* ── inner column: Entry 4 + its child Entry 5 ── */
+    .inner-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 64px;
+    }
+    .sub-svg {
+      width: 64px;
+      height: 48px;
+      display: block;
+      color: var(--ink);
+      flex-shrink: 0;
+    }
+    .sub-entry {
+      align-self: flex-end;
     }
 
     /* ── responsive ── */
     @media (max-width: 768px) {
       .study-tree { grid-template-columns: 1fr; gap: 56px; }
-      .tree-col { width: 160px; }
     }
   </style>
 </head>
@@ -108,18 +113,36 @@
 
     <div class="study-tree">
 
-      <!-- AI subtree -->
+      <!-- #AI: 2 leaves -->
       <div class="tree-col reveal">
         <span class="tree-root">#AI</span>
-        <div class="diag-connector"></div>
-        <a class="tree-leaf" href="/study/entry1">
-          <span class="leaf-title">Entry 1</span>
-        </a>
+        <svg class="branch-svg" viewBox="0 0 180 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="90" y1="0" x2="20" y2="64" stroke="currentColor" stroke-width="1"/>
+          <line x1="90" y1="0" x2="160" y2="64" stroke="currentColor" stroke-width="1"/>
+        </svg>
+        <div class="leaf-row">
+          <a class="tree-leaf" href="/study/entry1">Entry 1</a>
+          <a class="tree-leaf" href="/study/entry2">Entry 2</a>
+        </div>
       </div>
 
-      <!-- SW subtree -->
+      <!-- #SW: 2 leaves, right child has 1 sub-child -->
       <div class="tree-col reveal">
         <span class="tree-root">#SW</span>
+        <svg class="branch-svg" viewBox="0 0 180 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="90" y1="0" x2="20" y2="64" stroke="currentColor" stroke-width="1"/>
+          <line x1="90" y1="0" x2="160" y2="64" stroke="currentColor" stroke-width="1"/>
+        </svg>
+        <div class="leaf-row">
+          <a class="tree-leaf" href="/study/entry3">Entry 3</a>
+          <div class="inner-col">
+            <a class="tree-leaf" href="/study/entry4">Entry 4</a>
+            <svg class="sub-svg" viewBox="0 0 64 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="16" y1="0" x2="52" y2="48" stroke="currentColor" stroke-width="1"/>
+            </svg>
+            <a class="tree-leaf sub-entry" href="/study/entry5">Entry 5</a>
+          </div>
+        </div>
       </div>
 
     </div>
