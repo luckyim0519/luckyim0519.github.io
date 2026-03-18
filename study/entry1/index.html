@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lucky Im — Entry 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/style.css" />
+
+  <style>
+    body { background: var(--white); }
+
+    #entry-page {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 140px 32px 100px;
+      min-height: 100vh;
+    }
+    .entry-back {
+      font-size: 0.78rem; color: var(--muted);
+      text-decoration: none; letter-spacing: 0.04em;
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-bottom: 56px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .entry-back:hover { color: var(--ink); border-color: var(--ink); }
+    .entry-meta-date {
+      font-size: 0.72rem; color: var(--muted);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .entry-tag-badge {
+      display: inline-block;
+      font-size: 0.65rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 4px 10px; margin-bottom: 24px;
+    }
+    .entry-heading {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      line-height: 1.15; margin-bottom: 40px;
+    }
+    .entry-body {
+      font-size: 0.95rem; color: var(--muted);
+      line-height: 1.9;
+    }
+    .entry-body p { margin-bottom: 1.4em; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a class="nav-logo" href="/">LI</a>
+    <ul class="nav-links">
+      <li><a href="/about">About</a></li>
+      <li><a href="/study" class="active">Study</a></li>
+      <li><a href="/art">Art</a></li>
+    </ul>
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div id="entry-page">
+    <a class="entry-back" href="/study">← Study</a>
+    <div class="entry-meta-date">March 2026</div>
+    <div class="entry-tag-badge">AI</div>
+    <h1 class="entry-heading">Entry 1</h1>
+    <div class="entry-body">
+      <p>Placeholder content — this is where the study note body goes.</p>
+      <p>Topics, reading notes, and explorations will live here over time.</p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-left">
+      <span class="footer-name">Lucky Im</span>
+      <span class="footer-sub">Creative engineer seeking the key to the world's bottleneck.</span>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/luckyim0519" target="_blank">GitHub</a>
+      <a href="https://www.linkedin.com/in/luckyim/?originalSubdomain=ca" target="_blank">LinkedIn</a>
+    </div>
+    <span class="footer-copy">© 2025 · Vancouver, CA</span>
+  </footer>
+
+  <script src="../../js/main.js"></script>
+</body>
+</html>
