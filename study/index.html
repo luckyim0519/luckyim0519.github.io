@@ -43,7 +43,7 @@
       position: relative;
       width: 40px;
       height: 44px;
-      margin-left: 6px;
+      margin-left: 20px; /* ~center of #AI text in Source Code Pro 1.5rem */
       flex-shrink: 0;
     }
     .diag-connector::before {
@@ -51,10 +51,10 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 59px;
+      width: 57px; /* sqrt(36² + 44²) — runs 36px right, 44px down */
       height: 1px;
       background: var(--ink);
-      transform: rotate(48deg);
+      transform: rotate(51deg); /* atan(44/36) */
       transform-origin: left center;
     }
 
@@ -62,7 +62,7 @@
     .tree-leaf {
       text-decoration: none;
       display: block;
-      margin-left: 40px;
+      margin-left: 56px; /* 20px start + 36px horizontal run */
     }
     .leaf-title {
       font-family: 'Source Code Pro', monospace;
