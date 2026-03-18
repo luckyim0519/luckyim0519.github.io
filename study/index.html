@@ -55,15 +55,29 @@
 
     /* ── leaf node ── */
     .tree-leaf {
-      font-family: 'Source Code Pro', monospace;
-      font-size: 0.8rem;
-      color: var(--ink);
       text-decoration: none;
-      display: block;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       width: 64px;
       text-align: center;
     }
-    .tree-leaf:hover {
+    .leaf-label {
+      font-family: 'Source Code Pro', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 2px;
+    }
+    .leaf-name {
+      font-family: 'Source Code Pro', monospace;
+      font-size: 0.8rem;
+      color: var(--ink);
+      display: block;
+    }
+    .tree-leaf:hover .leaf-name {
       text-decoration: underline;
       text-underline-offset: 3px;
     }
@@ -121,13 +135,22 @@
         </svg>
         <div class="leaf-row">
           <div class="inner-col">
-            <a class="tree-leaf" href="/study/entry1">Entry 1</a>
+            <a class="tree-leaf" href="/study/entry1">
+              <span class="leaf-label">Field</span>
+              <span class="leaf-name">Entry 1</span>
+            </a>
             <svg class="sub-svg" viewBox="0 0 64 48" fill="none" xmlns="http://www.w3.org/2000/svg">
               <line x1="32" y1="0" x2="12" y2="48" stroke="currentColor" stroke-width="1"/>
             </svg>
-            <a class="tree-leaf sub-left" href="/study/entry3">Entry 3</a>
+            <a class="tree-leaf sub-left" href="/study/entry3">
+              <span class="leaf-label">Topic</span>
+              <span class="leaf-name">Entry 3</span>
+            </a>
           </div>
-          <a class="tree-leaf" href="/study/entry2">Entry 2</a>
+          <a class="tree-leaf" href="/study/entry2">
+            <span class="leaf-label">Field</span>
+            <span class="leaf-name">Entry 2</span>
+          </a>
         </div>
       </div>
 
@@ -139,13 +162,22 @@
           <line x1="90" y1="0" x2="160" y2="64" stroke="currentColor" stroke-width="1"/>
         </svg>
         <div class="leaf-row">
-          <a class="tree-leaf" href="/study/sw/entry1">Entry 1</a>
+          <a class="tree-leaf" href="/study/sw/entry1">
+            <span class="leaf-label">Field</span>
+            <span class="leaf-name">Entry 1</span>
+          </a>
           <div class="inner-col">
-            <a class="tree-leaf" href="/study/sw/entry2">Entry 2</a>
+            <a class="tree-leaf" href="/study/sw/entry2">
+              <span class="leaf-label">Field</span>
+              <span class="leaf-name">Entry 2</span>
+            </a>
             <svg class="sub-svg" viewBox="0 0 64 48" fill="none" xmlns="http://www.w3.org/2000/svg">
               <line x1="32" y1="0" x2="52" y2="48" stroke="currentColor" stroke-width="1"/>
             </svg>
-            <a class="tree-leaf sub-right" href="/study/sw/entry3">Entry 3</a>
+            <a class="tree-leaf sub-right" href="/study/sw/entry3">
+              <span class="leaf-label">Topic</span>
+              <span class="leaf-name">Entry 3</span>
+            </a>
           </div>
         </div>
       </div>
