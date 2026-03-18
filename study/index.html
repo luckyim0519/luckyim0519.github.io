@@ -10,127 +10,74 @@
   <link rel="stylesheet" href="../css/style.css" />
 
   <style>
-    /* ── match about page background ── */
     body { background: var(--off); }
-    .tree-leaf-inner { background: var(--off); }
-    .tree-leaf:hover .tree-leaf-inner { background: var(--white); }
 
     /* ── tree layout ── */
     .study-tree {
       display: flex;
-      gap: 80px;
+      gap: 100px;
       flex-wrap: wrap;
       margin-top: 8px;
     }
+
     .tree-col {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      min-width: 240px;
+      position: relative;
     }
 
-    /* ── root node (circle) ── */
-    .tree-root-node {
-      width: 88px; height: 88px;
-      border-radius: 50%;
-      background: var(--ink);
-      color: #fff;
-      display: flex; align-items: center; justify-content: center;
+    /* ── root: plain text, no decoration ── */
+    .tree-root {
       font-family: 'DM Serif Display', serif;
-      font-size: 1rem; letter-spacing: 0.06em;
-      position: relative;
-      animation: cell-breathe 3s ease-in-out infinite;
-      z-index: 1;
-    }
-    .tree-root-node::before,
-    .tree-root-node::after {
-      content: '';
-      position: absolute;
-      border-radius: 50%;
-      border: 1px solid var(--ink);
-      width: 100%; height: 100%;
-      top: 0; left: 0;
-      animation: cell-ripple 3s ease-out infinite;
-      pointer-events: none;
-    }
-    .tree-root-node::after { animation-delay: 1.5s; }
-
-    /* ── vertical connector root → leaves ── */
-    .tree-connector {
-      width: 1px;
-      height: 40px;
-      background: var(--ink);
-      margin-left: 43px;
-    }
-
-    /* ── leaves container ── */
-    .tree-leaves {
-      position: relative;
-      padding-left: 56px;
-      border-left: 1px solid var(--ink);
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      padding-top: 8px;
-      padding-bottom: 8px;
-    }
-
-    /* ── individual leaf entry ── */
-    .tree-leaf {
-      position: relative;
-      text-decoration: none;
+      font-size: 1.5rem;
+      color: var(--ink);
+      letter-spacing: 0.04em;
       display: block;
     }
-    .tree-leaf::before {
+
+    /* ── diagonal connector ── */
+    /* Box is 40px wide × 44px tall; line length = sqrt(40²+44²) ≈ 59px at 48° */
+    .diag-connector {
+      position: relative;
+      width: 40px;
+      height: 44px;
+      margin-left: 6px;
+      flex-shrink: 0;
+    }
+    .diag-connector::before {
       content: '';
       position: absolute;
-      left: -56px;
-      top: 50%;
-      width: 56px;
+      top: 0;
+      left: 0;
+      width: 59px;
       height: 1px;
       background: var(--ink);
+      transform: rotate(48deg);
+      transform-origin: left center;
     }
-    .tree-leaf-inner {
-      border: 1px solid var(--border);
-      padding: 14px 20px;
-      background: var(--white);
-      transition: background 0.2s, border-color 0.2s;
-    }
-    .tree-leaf:hover .tree-leaf-inner {
-      background: var(--off);
-      border-color: var(--ink);
-    }
-    .leaf-tag {
-      font-size: 0.65rem; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--muted);
-      margin-bottom: 4px;
+
+    /* ── leaf (entry) ── */
+    .tree-leaf {
+      text-decoration: none;
+      display: block;
+      margin-left: 40px;
     }
     .leaf-title {
       font-family: 'DM Serif Display', serif;
-      font-size: 1rem; color: var(--ink);
+      font-size: 0.95rem;
+      color: var(--ink);
       display: block;
     }
     .leaf-date {
-      font-size: 0.72rem; color: var(--muted);
-      margin-top: 4px; display: block;
+      font-size: 0.72rem;
+      color: var(--muted);
+      display: block;
+      margin-top: 2px;
     }
-
-    /* ── placeholder (no entries yet) ── */
-    .tree-placeholder {
-      font-size: 0.78rem; color: var(--muted);
-      font-style: italic;
-      font-family: 'DM Serif Display', serif;
-      padding-left: 12px;
-    }
-
-    /* ── animations ── */
-    @keyframes cell-breathe {
-      0%, 100% { transform: scale(1); }
-      50%       { transform: scale(1.06); }
-    }
-    @keyframes cell-ripple {
-      0%   { transform: scale(1);   opacity: 0.45; }
-      100% { transform: scale(2.2); opacity: 0; }
+    .tree-leaf:hover .leaf-title {
+      text-decoration: underline;
+      text-underline-offset: 3px;
     }
 
     /* ── responsive ── */
@@ -162,26 +109,17 @@
 
       <!-- AI subtree -->
       <div class="tree-col reveal">
-        <div class="tree-root-node">AI</div>
-        <div class="tree-connector"></div>
-        <div class="tree-leaves">
-          <a class="tree-leaf" href="/study/entry1">
-            <div class="tree-leaf-inner">
-              <div class="leaf-tag">AI</div>
-              <span class="leaf-title">Entry 1</span>
-              <span class="leaf-date">March 2026</span>
-            </div>
-          </a>
-        </div>
+        <span class="tree-root">AI</span>
+        <div class="diag-connector"></div>
+        <a class="tree-leaf" href="/study/entry1">
+          <span class="leaf-title">Entry 1</span>
+          <span class="leaf-date">March 2026</span>
+        </a>
       </div>
 
       <!-- SW subtree -->
       <div class="tree-col reveal">
-        <div class="tree-root-node">SW</div>
-        <div class="tree-connector"></div>
-        <div class="tree-leaves">
-          <span class="tree-placeholder">Coming soon —</span>
-        </div>
+        <span class="tree-root">SW</span>
       </div>
 
     </div>
