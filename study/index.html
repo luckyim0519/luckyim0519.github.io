@@ -68,7 +68,7 @@
       text-underline-offset: 3px;
     }
 
-    /* ── inner column: Entry 4 + its child Entry 5 ── */
+    /* ── inner column: node + its single sub-child ── */
     .inner-col {
       display: flex;
       flex-direction: column;
@@ -82,9 +82,8 @@
       color: var(--ink);
       flex-shrink: 0;
     }
-    .sub-entry {
-      align-self: flex-end;
-    }
+    .sub-left  { align-self: flex-start; }
+    .sub-right { align-self: flex-end; }
 
     /* ── responsive ── */
     @media (max-width: 768px) {
@@ -113,7 +112,7 @@
 
     <div class="study-tree">
 
-      <!-- #AI: 2 leaves -->
+      <!-- #AI: Entry1(left, has child Entry3) + Entry2(right) -->
       <div class="tree-col reveal">
         <span class="tree-root">#AI</span>
         <svg class="branch-svg" viewBox="0 0 180 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -121,12 +120,18 @@
           <line x1="90" y1="0" x2="160" y2="64" stroke="currentColor" stroke-width="1"/>
         </svg>
         <div class="leaf-row">
-          <a class="tree-leaf" href="/study/entry1">Entry 1</a>
+          <div class="inner-col">
+            <a class="tree-leaf" href="/study/entry1">Entry 1</a>
+            <svg class="sub-svg" viewBox="0 0 64 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="32" y1="0" x2="12" y2="48" stroke="currentColor" stroke-width="1"/>
+            </svg>
+            <a class="tree-leaf sub-left" href="/study/entry3">Entry 3</a>
+          </div>
           <a class="tree-leaf" href="/study/entry2">Entry 2</a>
         </div>
       </div>
 
-      <!-- #SW: 2 leaves, right child has 1 sub-child -->
+      <!-- #SW: Entry1(left) + Entry2(right, has child Entry3) -->
       <div class="tree-col reveal">
         <span class="tree-root">#SW</span>
         <svg class="branch-svg" viewBox="0 0 180 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -134,13 +139,13 @@
           <line x1="90" y1="0" x2="160" y2="64" stroke="currentColor" stroke-width="1"/>
         </svg>
         <div class="leaf-row">
-          <a class="tree-leaf" href="/study/entry3">Entry 3</a>
+          <a class="tree-leaf" href="/study/sw/entry1">Entry 1</a>
           <div class="inner-col">
-            <a class="tree-leaf" href="/study/entry4">Entry 4</a>
+            <a class="tree-leaf" href="/study/sw/entry2">Entry 2</a>
             <svg class="sub-svg" viewBox="0 0 64 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <line x1="16" y1="0" x2="52" y2="48" stroke="currentColor" stroke-width="1"/>
+              <line x1="32" y1="0" x2="52" y2="48" stroke="currentColor" stroke-width="1"/>
             </svg>
-            <a class="tree-leaf sub-entry" href="/study/entry5">Entry 5</a>
+            <a class="tree-leaf sub-right" href="/study/sw/entry3">Entry 3</a>
           </div>
         </div>
       </div>
